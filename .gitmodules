@@ -1,0 +1,3 @@
+[submodule "fork-api"]
+	path = fork-api
+	url = https://github.com/dilarasah00/spring-ecommerce-api.git

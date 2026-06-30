@@ -1,0 +1,15 @@
+rest-assured/src/test/resources/configuration.properties
+
+rest-assured/target/logs/
+rest-assured/*.log
+*.log
+
+rest-assured/target/
+rest-assured/.idea/
+rest-assured/*.iml
+rest-assured/.classpath
+rest-assured/.project
+rest-assured/.settings/
+
+.DS_Store
+Thumbs.db

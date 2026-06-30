@@ -8,18 +8,14 @@ import io.restassured.specification.RequestSpecification;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Centralized HTTP client for tests. Wraps Rest-Assured and provides reusable request methods.
- * Service layer classes should only use this client and must not call Rest-Assured directly.
- */
 public class ApiClient {
 
     private final String baseUrl;
 
     public ApiClient(String baseUrl) {
         this.baseUrl = Objects.requireNonNull(baseUrl, "baseUrl");
-        // Optionally set global base URI for Rest-Assured
         RestAssured.baseURI = this.baseUrl;
+
     }
 
     public Response postRequest(String endpoint, Object body, Map<String, String> headers) {
@@ -35,31 +31,24 @@ public class ApiClient {
             req.body(body);
         }
 
-        return req.when()
-                .post(endpoint)
-                .then()
-                .extract()
-                .response();
+        return req.post(endpoint);
     }
 
     public Response getRequest(String endpoint, Map<String, String> queryParams, Map<String, String> headers) {
-        RequestSpecification req = RestAssured.given()
-                .accept(ContentType.JSON);
 
-        if (headers != null && !headers.isEmpty()) {
-            req.headers(headers);
-        }
+        System.out.println("BEFORE REQUEST");
 
-        if (queryParams != null && !queryParams.isEmpty()) {
-            req.queryParams(queryParams);
-        }
-
-        return req.when()
+        Response res = RestAssured.given()
+                .log().all()
                 .get(endpoint)
-                .then()
-                .extract()
-                .response();
+                .andReturn();
+
+        System.out.println("AFTER REQUEST");
+
+        return res;
     }
+
+
 
     public Response putRequest(String endpoint, Object body, Map<String, String> headers) {
         RequestSpecification req = RestAssured.given()
@@ -74,11 +63,7 @@ public class ApiClient {
             req.body(body);
         }
 
-        return req.when()
-                .put(endpoint)
-                .then()
-                .extract()
-                .response();
+        return req.put(endpoint);
     }
 
     public Response deleteRequest(String endpoint, Map<String, String> headers) {
@@ -89,11 +74,6 @@ public class ApiClient {
             req.headers(headers);
         }
 
-        return req.when()
-                .delete(endpoint)
-                .then()
-                .extract()
-                .response();
+        return req.delete(endpoint);
     }
 }
-

@@ -11,5 +11,8 @@ rest-assured/.classpath
 rest-assured/.project
 rest-assured/.settings/
 
+rest-assured/allure-results/
+rest-assured/allure-report/
+
 .DS_Store
 Thumbs.db

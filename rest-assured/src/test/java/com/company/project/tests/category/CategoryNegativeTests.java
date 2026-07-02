@@ -2,10 +2,8 @@ package com.company.project.tests.category;
 
 import com.company.project.base.BaseTest;
 import com.company.project.model.request.CategoryRequest;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import java.util.concurrent.ThreadLocalRandom;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.company.project.utilities.DBUtils;
@@ -92,8 +90,4 @@ public class CategoryNegativeTests extends BaseTest {
         LoggerUtil.info("DB verification passed - no category found after delete attempt with ID {}", nonExistingId);
     }
 
-    @AfterEach
-    public void tearDown() {
-        DBUtils.destroy();
-    }
 }

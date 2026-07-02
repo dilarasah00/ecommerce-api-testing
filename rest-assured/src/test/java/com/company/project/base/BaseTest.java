@@ -3,6 +3,8 @@ package com.company.project.base;
 import com.company.project.api.CategoryAPI;
 import com.company.project.helpers.ApiClient;
 
+import com.company.project.utilities.DBUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 public class BaseTest {
@@ -19,5 +21,10 @@ public class BaseTest {
 
 		categoryAPI = new CategoryAPI(apiClient);
 	}
+
+    @AfterEach
+    public void tearDown() {
+        DBUtils.destroy();
+    }
 }
 

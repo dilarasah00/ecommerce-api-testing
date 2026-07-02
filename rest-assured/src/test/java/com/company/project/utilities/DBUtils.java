@@ -109,4 +109,43 @@ public class DBUtils {
             }
         }
     }
+
+    public static String getString(List<Map<String, Object>> rows, String columnName) {
+        if (rows == null || rows.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> firstRow = rows.get(0);
+
+        if (firstRow.containsKey(columnName.toLowerCase())) {
+            Object val = firstRow.get(columnName.toLowerCase());
+            return val != null ? String.valueOf(val) : null;
+        } else if (firstRow.containsKey(columnName.toUpperCase())) {
+            Object val = firstRow.get(columnName.toUpperCase());
+            return val != null ? String.valueOf(val) : null;
+        }
+        return null;
+    }
+
+
+    public static Long getLong(List<Map<String, Object>> rows, String columnName) {
+        if (rows == null || rows.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> firstRow = rows.get(0);
+        String key = columnName.toLowerCase();
+
+        if (!firstRow.containsKey(key)) {
+            key = columnName.toUpperCase();
+        }
+
+        Object val = firstRow.get(key);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val).longValue();
+        }
+        return Long.parseLong(val.toString());
+    }
 }

@@ -4,7 +4,6 @@ import com.company.project.base.BaseTest;
 import com.company.project.model.request.CategoryRequest;
 import com.company.project.model.response.CategoryResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import com.company.project.utilities.DBUtils;
@@ -45,12 +44,8 @@ public class CategoryE2ETests extends BaseTest {
         LoggerUtil.info("Verifying Root Category ID {} in database", rootCategoryId);
         List<Map<String, Object>> rootRows = DBUtils.getQueryResultList("SELECT * FROM category WHERE id = " + rootCategoryId);
         assertFalse(rootRows.isEmpty(), "Root category should exist in DB after creation");
-        Object rootNameVal = rootRows.get(0).get("name");
-        if (rootNameVal == null) rootNameVal = rootRows.get(0).get("NAME");
-        assertEquals("Literature & Fiction", String.valueOf(rootNameVal), "Root name in DB should match");
-        Object rootParentVal = rootRows.get(0).get("parent_id");
-        if (rootParentVal == null) rootParentVal = rootRows.get(0).get("PARENT_ID");
-        assertNull(rootParentVal, "Root parent_id should be null in DB");
+        assertEquals("Literature & Fiction", DBUtils.getString(rootRows, "name"), "Root name in DB should match");
+        assertNull(DBUtils.getLong(rootRows, "parent_id"), "Root parent_id should be null in DB");
         LoggerUtil.info("Root Category verification passed");
 
         // ========== STEP 2: CREATE Child Category (TC-CAT-02) ==========
@@ -72,15 +67,8 @@ public class CategoryE2ETests extends BaseTest {
         LoggerUtil.info("Verifying Child Category ID {} in database", childCategoryId);
         List<Map<String, Object>> childRows = DBUtils.getQueryResultList("SELECT * FROM category WHERE id = " + childCategoryId);
         assertFalse(childRows.isEmpty(), "Child category should exist in DB after creation");
-        Object childNameVal = childRows.get(0).get("name");
-        if (childNameVal == null) childNameVal = childRows.get(0).get("NAME");
-        assertEquals("Turkish Literature TOP 50", String.valueOf(childNameVal), "Child name in DB should match");
-        Object childParentVal = childRows.get(0).get("parent_id");
-        if (childParentVal == null) childParentVal = childRows.get(0).get("PARENT_ID");
-        Long parentIdFromDb = null;
-        if (childParentVal instanceof Number) parentIdFromDb = ((Number) childParentVal).longValue();
-        else if (childParentVal != null) parentIdFromDb = Long.parseLong(childParentVal.toString());
-        assertEquals(rootCategoryId, parentIdFromDb, "Child parent_id in DB should match rootCategoryId");
+        assertEquals("Turkish Literature TOP 50", DBUtils.getString(childRows, "name"), "Child name in DB should match");
+        assertEquals(rootCategoryId, DBUtils.getLong(childRows, "parent_id"), "Child parent_id in DB should match rootCategoryId");
         LoggerUtil.info("Child Category verification passed");
 
         // ========== STEP 3: READ Child Category by ID (TC-CAT-06) ==========
@@ -118,9 +106,7 @@ public class CategoryE2ETests extends BaseTest {
         LoggerUtil.info("Verifying updated Root Category ID {} in database", rootCategoryId);
         List<Map<String, Object>> updatedRootRows = DBUtils.getQueryResultList("SELECT * FROM category WHERE id = " + rootCategoryId);
         assertFalse(updatedRootRows.isEmpty(), "Root category should exist in DB after update");
-        Object updatedNameVal = updatedRootRows.get(0).get("name");
-        if (updatedNameVal == null) updatedNameVal = updatedRootRows.get(0).get("NAME");
-        assertEquals("Literature", String.valueOf(updatedNameVal), "Root name in DB should be updated to Literature");
+        assertEquals("Literature", DBUtils.getString(updatedRootRows, "name"), "Root name in DB should be updated to Literature");
         LoggerUtil.info("Root Category update verification passed");
 
         // ========== STEP 6: DELETE Categories in Strict Order (TC-CAT-11) ==========
@@ -148,8 +134,4 @@ public class CategoryE2ETests extends BaseTest {
         LoggerUtil.info("Deletion verification passed");
     }
 
-    @AfterEach
-    public void tearDown() {
-        DBUtils.destroy();
-    }
 }
